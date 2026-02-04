@@ -78,7 +78,7 @@ class _HomeMasyarakatState extends State<HomeMasyarakat> {
                   onPressed: () {
                     // TODO: Arahkan ke halaman Pertanyaan Diagnosis (Sprint 5)
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Fitur Diagnosis (Sprint 5)")),
+                      const SnackBar(content: Text("Fitur Diagnosis belum tersedia")),
                     );
                   },
                   style: ElevatedButton.styleFrom(

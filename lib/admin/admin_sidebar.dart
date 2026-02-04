@@ -3,12 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../auth/login_page.dart';
 import 'admin_dashboard.dart';
-// import 'admin_kelola_gejala.dart';
-// import 'admin_kelola_cedera.dart';
-// import 'admin_kelola_basis_aturan.dart';
-// import 'admin_kelola_penanganan.dart';
-// import 'admin_kelola_pengguna.dart';
-// import 'admin_laporan_statistik.dart';
+import 'admin_kelola_gejala.dart';
+import 'admin_kelola_cedera.dart';
+import 'admin_kelola_basis_aturan.dart';
+import 'admin_kelola_penanganan.dart';
+import 'admin_kelola_pengguna.dart';
+import 'admin_laporan_statistik.dart';
 
 class AdminSidebar extends StatelessWidget {
   final String activePage;
@@ -89,12 +89,12 @@ class AdminSidebar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
               children: [
                 _menu(context, "Dashboard", Icons.grid_view_rounded, 'dashboard', const AdminDashboard()),
-                // _menu(context, "Kelola Data Gejala", Icons.monitor_heart, 'gejala', const AdminKelolaGejala()),
-                // _menu(context, "Kelola Data Cedera", Icons.health_and_safety_outlined, 'cedera', const AdminKelolaCedera()),
-                // _menu(context, "Basis Aturan & Bobot CF", Icons.percent_rounded, 'aturan', const AdminKelolaBasisAturan()),
-                // _menu(context, "Kelola Penanganan", Icons.local_hospital_rounded, 'penanganan', const AdminKelolaPenanganan()),
-                // _menu(context, "Kelola Pengguna", Icons.people_alt_rounded, 'pengguna', const AdminKelolaPengguna()),
-                // _menu(context, "Laporan & Statistik", Icons.bar_chart_rounded, 'laporan', const AdminLaporanStatistik()),
+                _menu(context, "Kelola Data Gejala", Icons.monitor_heart, 'gejala', const AdminKelolaGejala()),
+                _menu(context, "Kelola Data Cedera", Icons.health_and_safety_outlined, 'cedera', const AdminKelolaCedera()),
+                _menu(context, "Basis Aturan & Bobot CF", Icons.percent_rounded, 'aturan', const AdminKelolaBasisAturan()),
+                _menu(context, "Kelola Penanganan", Icons.local_hospital_rounded, 'penanganan', const AdminKelolaPenanganan()),
+                _menu(context, "Kelola Pengguna", Icons.people_alt_rounded, 'pengguna', const AdminKelolaPengguna()),
+                _menu(context, "Laporan & Statistik", Icons.bar_chart_rounded, 'laporan', const AdminLaporanStatistik()),
               ],
             ),
           ),

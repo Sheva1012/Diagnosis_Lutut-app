@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+// 1. Tambahkan import ini
+import 'package:intl/date_symbol_data_local.dart'; 
+
 import 'core/supabase_client.dart';
 import 'screens/splash_screen.dart';
 import 'auth/login_page.dart';
@@ -10,10 +13,14 @@ import 'masyarakat/home_masyarakat.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Inisialisasi Supabase
   await Supabase.initialize(
     url: SupabaseConfig.supabaseUrl,
     anonKey: SupabaseConfig.supabaseAnonKey,
   );
+
+  // 2. Tambahkan baris ini untuk memuat format tanggal Indonesia
+  await initializeDateFormatting('id_ID', null);
 
   runApp(const MyApp());
 }
