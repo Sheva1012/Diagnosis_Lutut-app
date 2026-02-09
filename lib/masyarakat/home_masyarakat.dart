@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../auth/login_page.dart';
+import 'profil_masyarakat.dart';
+import 'daftarcedera_masyarakat.dart';
+import 'daftargejala_masyarakat.dart';
+import 'edukasi_masyarakat.dart';
+import 'konsultasi_masyarakat.dart';
+import 'diagnosis_masyarakat.dart'; // <--- JANGAN LUPA IMPORT INI
+import '../services/masyarakat/home_service.dart';
 
 class HomeMasyarakat extends StatefulWidget {
   const HomeMasyarakat({super.key});
@@ -11,172 +16,298 @@ class HomeMasyarakat extends StatefulWidget {
 }
 
 class _HomeMasyarakatState extends State<HomeMasyarakat> {
-  int _selectedIndex = 0; // 0 = Home, 1 = Profil
+  int _selectedIndex = 0;
+  final HomeService _homeService = HomeService();
+  String _userName = "User";
 
-  // Fungsi Logout
-  Future<void> _logout() async {
-    await Supabase.instance.client.auth.signOut();
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    final name = await _homeService.getCurrentUserName();
     if (mounted) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginPage()),
-        (route) => false,
-      );
+      setState(() => _userName = name);
     }
   }
 
-  // Tampilan Halaman Home (Tab 1)
+  // ===================== HOME PAGE =====================
   Widget _buildHomePage() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+    return SafeArea(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Biru
+          // ================= HEADER (FIXED) =================
           Container(
-            padding: const EdgeInsets.all(20),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              borderRadius: BorderRadius.circular(12),
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            color: const Color(0xFFF8F9FD),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 16),
                 Text(
-                  "Halo, User 👋", // Nanti bisa diganti nama asli dari DB
-                  style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 6),
-                Text("Yuk cek kondisi lutut Anda hari ini", style: GoogleFonts.poppins()),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Banner Mulai Diagnosis
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade100,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  "Mulai Diagnosis",
-                  style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "Jawab pertanyaan untuk mengetahui kondisi lutut Anda",
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(fontSize: 12),
-                ),
-                const SizedBox(height: 15),
-                ElevatedButton(
-                  onPressed: () {
-                    // TODO: Arahkan ke halaman Pertanyaan Diagnosis (Sprint 5)
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Fitur Diagnosis belum tersedia")),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
+                  "Halo, $_userName 👋",
+                  style: GoogleFonts.poppins(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF2D3142),
                   ),
-                  child: const Text("Mulai"),
-                )
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Yuk cek kondisi lutut Anda hari ini",
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.grey[500],
+                  ),
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
 
-          // Menu Grid
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 1.3,
-            children: [
-              _menuCard("Daftar Cedera", Icons.healing),
-              _menuCard("Daftar Gejala", Icons.monitor_heart),
-              _menuCard("Edukasi", Icons.menu_book),
-              _menuCard("Konsultasi", Icons.support_agent),
-            ],
+          // ================= CONTENT (SCROLL) =================
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 12),
+
+                  // ================= BANNER =================
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue.shade400, Colors.blue.shade600],
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blue.withOpacity(0.3),
+                          blurRadius: 15,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          "Mulai Diagnosis",
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Jawab pertanyaan singkat untuk mengetahui kondisi lutut Anda.",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Colors.white.withOpacity(0.9),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // --- NAVIGASI KE HALAMAN DIAGNOSIS ---
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const DiagnosisMasyarakat(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.blue.shade600,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            child: Text(
+                              "Mulai Sekarang",
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // ================= TITLE =================
+                  Text(
+                    "Layanan Utama",
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF2D3142),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // ================= MENU GRID =================
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 20,
+                    crossAxisSpacing: 20,
+                    childAspectRatio: 1.1,
+                    children: [
+                      _menuCard(
+                        "Daftar Cedera",
+                        Icons.healing_rounded,
+                        Colors.orange.shade50,
+                        Colors.orange,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const DaftarCederaMasyarakat(),
+                            ),
+                          );
+                        },
+                      ),
+                      _menuCard(
+                        "Daftar Gejala",
+                        Icons.monitor_heart_rounded,
+                        Colors.red.shade50,
+                        Colors.red,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const DaftarGejalaMasyarakat(),
+                            ),
+                          );
+                        },
+                      ),
+                      _menuCard(
+                        "Edukasi",
+                        Icons.menu_book_rounded,
+                        Colors.green.shade50,
+                        Colors.green,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const EdukasiMasyarakat(),
+                            ),
+                          );
+                        },
+                      ),
+                      _menuCard(
+                        "Konsultasi",
+                        Icons.support_agent_rounded,
+                        Colors.purple.shade50,
+                        Colors.purple,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const KonsultasiMasyarakat(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  // Tampilan Halaman Profil (Tab 2)
-  Widget _buildProfilePage() {
-    final user = Supabase.instance.client.auth.currentUser;
-    final email = user?.email ?? "User";
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircleAvatar(radius: 50, child: Icon(Icons.person, size: 50)),
-          const SizedBox(height: 16),
-          Text(email, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold)),
-          const Text("Masyarakat"),
-          const SizedBox(height: 32),
-          ElevatedButton.icon(
-            onPressed: _logout,
-            icon: const Icon(Icons.logout),
-            label: const Text("Keluar Akun"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade100,
-              foregroundColor: Colors.red,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _menuCard(String title, IconData icon) {
+  // ================= MENU CARD =================
+  Widget _menuCard(
+    String title,
+    IconData icon,
+    Color bgColor,
+    Color iconColor, {
+    VoidCallback? onTap,
+  }) {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 32, color: Colors.blue),
-          const SizedBox(height: 8),
-          Text(title, textAlign: TextAlign.center, style: GoogleFonts.poppins(fontSize: 12)),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          ),
         ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: onTap,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 30, color: iconColor),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
+  // ================= MAIN =================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: _selectedIndex == 0 
-          ? AppBar(title: const Text("Beranda"), backgroundColor: Colors.blue, foregroundColor: Colors.white)
-          : null, // Profil tidak butuh AppBar standar
-      
-      // Ganti body berdasarkan tab yang dipilih
-      body: _selectedIndex == 0 ? _buildHomePage() : _buildProfilePage(),
-
+      backgroundColor: const Color(0xFFF8F9FD),
+      body: _selectedIndex == 0 ? _buildHomePage() : const ProfilMasyarakat(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        selectedItemColor: Colors.blue,
+        onTap: (i) => setState(() => _selectedIndex = i),
+        selectedItemColor: Colors.blue.shade600,
+        unselectedItemColor: Colors.grey.shade400,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profil"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_rounded),
+            label: "Beranda",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_rounded),
+            label: "Profil",
+          ),
         ],
       ),
     );
