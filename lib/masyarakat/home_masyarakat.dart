@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'profil_masyarakat.dart';
 import 'daftarcedera_masyarakat.dart';
@@ -16,6 +17,20 @@ class HomeMasyarakat extends StatefulWidget {
 }
 
 class _HomeMasyarakatState extends State<HomeMasyarakat> {
+  static const Color _bg = Color(0xFFF2F6FF);
+  static const Color _ink = Color(0xFF1F2A44);
+  static const Color _teal = Color(0xFF2F6FDB);
+  static const Color _tealSoft = Color(0xFFE7F0FF);
+  static const Color _amber = Color(0xFF4B7FD8);
+  static const Color _amberSoft = Color(0xFFE6EEFF);
+  static const Color _rose = Color(0xFF305FD1);
+  static const Color _roseSoft = Color(0xFFE7EDFF);
+  static const Color _sage = Color(0xFF2B72B8);
+  static const Color _sageSoft = Color(0xFFE4F1FF);
+  static const Color _muted = Color(0xFF6B7A99);
+  static const Color _border = Color(0xFFD6E2F3);
+  static const Color _navBg = Color(0xFFFFFFFF);
+
   int _selectedIndex = 0;
   final HomeService _homeService = HomeService();
   String _userName = "User";
@@ -35,58 +50,72 @@ class _HomeMasyarakatState extends State<HomeMasyarakat> {
 
   // ===================== HOME PAGE =====================
   Widget _buildHomePage() {
-    return SafeArea(
-      child: Column(
-        children: [
-          // ================= HEADER (FIXED) =================
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            color: const Color(0xFFF8F9FD),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                Text(
-                  "Halo, $_userName 👋",
-                  style: GoogleFonts.poppins(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF2D3142),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  "Yuk cek kondisi lutut Anda hari ini",
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: Colors.grey[500],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // ================= CONTENT (SCROLL) =================
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFFF5F8FF),
+            Color(0xFFEAF1FF),
+            Color(0xFFF9FBFF),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: SafeArea(
+        child: Column(
+          children: [
+            // ================= HEADER (FIXED) =================
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              color: _bg,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Halo, $_userName",
+                    style: GoogleFonts.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: _ink,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Yuk cek kondisi lutut Anda hari ini",
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: _muted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ================= CONTENT (SCROLL) =================
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 12),
 
                   // ================= BANNER =================
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.blue.shade400, Colors.blue.shade600],
+                        colors: [_ink, _teal],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.blue.withOpacity(0.3),
+                          color: _teal.withOpacity(0.25),
                           blurRadius: 15,
                           offset: const Offset(0, 10),
                         ),
@@ -125,11 +154,12 @@ class _HomeMasyarakatState extends State<HomeMasyarakat> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.blue.shade600,
+                              backgroundColor: const Color(0xFFFDF9F3),
+                              foregroundColor: _ink,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
+                              side: BorderSide(color: _border),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                             child: Text(
@@ -152,7 +182,7 @@ class _HomeMasyarakatState extends State<HomeMasyarakat> {
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF2D3142),
+                      color: _ink,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -169,8 +199,8 @@ class _HomeMasyarakatState extends State<HomeMasyarakat> {
                       _menuCard(
                         "Daftar Cedera",
                         Icons.healing_rounded,
-                        Colors.orange.shade50,
-                        Colors.orange,
+                        _amberSoft,
+                        _amber,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -183,8 +213,8 @@ class _HomeMasyarakatState extends State<HomeMasyarakat> {
                       _menuCard(
                         "Daftar Gejala",
                         Icons.monitor_heart_rounded,
-                        Colors.red.shade50,
-                        Colors.red,
+                        _roseSoft,
+                        _rose,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -198,8 +228,8 @@ class _HomeMasyarakatState extends State<HomeMasyarakat> {
                       _menuCard(
                         "Edukasi",
                         Icons.menu_book_rounded,
-                        Colors.green.shade50,
-                        Colors.green,
+                        _sageSoft,
+                        _sage,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -212,8 +242,8 @@ class _HomeMasyarakatState extends State<HomeMasyarakat> {
                       _menuCard(
                         "Konsultasi",
                         Icons.support_agent_rounded,
-                        Colors.purple.shade50,
-                        Colors.purple,
+                        _tealSoft,
+                        _teal,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -227,11 +257,12 @@ class _HomeMasyarakatState extends State<HomeMasyarakat> {
                     ],
                   ),
                   const SizedBox(height: 40),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -248,9 +279,10 @@ class _HomeMasyarakatState extends State<HomeMasyarakat> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _border),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: _ink.withOpacity(0.06),
             blurRadius: 20,
             offset: const Offset(0, 5),
           ),
@@ -291,24 +323,33 @@ class _HomeMasyarakatState extends State<HomeMasyarakat> {
   // ================= MAIN =================
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FD),
-      body: _selectedIndex == 0 ? _buildHomePage() : const ProfilMasyarakat(),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (i) => setState(() => _selectedIndex = i),
-        selectedItemColor: Colors.blue.shade600,
-        unselectedItemColor: Colors.grey.shade400,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: "Beranda",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_rounded),
-            label: "Profil",
-          ),
-        ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: _bg,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: _bg,
+        body: _selectedIndex == 0 ? _buildHomePage() : const ProfilMasyarakat(),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (i) => setState(() => _selectedIndex = i),
+          backgroundColor: _navBg,
+          elevation: 10,
+          selectedItemColor: _teal,
+          unselectedItemColor: _muted,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_rounded),
+              label: "Beranda",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_rounded),
+              label: "Profil",
+            ),
+          ],
+        ),
       ),
     );
   }

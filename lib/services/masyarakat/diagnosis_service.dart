@@ -70,7 +70,7 @@ class DiagnosisService {
         return {
           'id_diagnosis': idDiagnosis,
           'id_gejala': item['id_gejala'],
-          'jawaban_user': item['label'], 
+          'jawaban_user': item['label'],
           'nilai_cf_user': item['cf_user'],
           // 'nilai_cf_gejala': item['cf_hasil_kali'], // Opsional jika kolom ada
         };
@@ -81,6 +81,35 @@ class DiagnosisService {
       }
     } catch (e) {
       throw Exception('Gagal menyimpan diagnosis: $e');
+    }
+  }
+
+  // 4. Ambil Riwayat Diagnosis
+  Future<List<Map<String, dynamic>>> getRiwayatDiagnosis() async {
+    try {
+      final user = _client.auth.currentUser;
+      if (user == null) throw Exception("User tidak ditemukan");
+
+      // PERBAIKAN QUERY:
+      // Hapus 'solusi', ganti dengan relasi ke tabel 'penanganan'
+      final response = await _client
+          .from('diagnosis')
+          .select('''
+            *,
+            cedera:id_cedera (
+              nama_cedera,
+              penanganan (
+                penanganan_awal,
+                penanganan_lanjutan
+              )
+            )
+          ''')
+          .eq('id_user', user.id)
+          .order('tanggal_diagnosis', ascending: false);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      throw Exception('Gagal mengambil riwayat: $e');
     }
   }
 }

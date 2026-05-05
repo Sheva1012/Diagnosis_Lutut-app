@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/masyarakat/diagnosis_service.dart';
 import 'hasil_diagnosis_masyarakat.dart';
@@ -11,6 +12,13 @@ class DiagnosisMasyarakat extends StatefulWidget {
 }
 
 class _DiagnosisMasyarakatState extends State<DiagnosisMasyarakat> {
+  static const Color _bg = Color(0xFFF2F6FF);
+  static const Color _ink = Color(0xFF1F2A44);
+  static const Color _primary = Color(0xFF2F6FDB);
+  static const Color _soft = Color(0xFFE7F0FF);
+  static const Color _muted = Color(0xFF6B7A99);
+  static const Color _border = Color(0xFFD6E2F3);
+
   final DiagnosisService _service = DiagnosisService();
 
   List<Map<String, dynamic>> _questions = []; // Data Gejala
@@ -55,7 +63,13 @@ class _DiagnosisMasyarakatState extends State<DiagnosisMasyarakat> {
       if (mounted) {
         // PERBAIKAN: Matikan loading jika error agar tidak stuck
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+        Fluttertoast.showToast(
+          msg: "Terjadi kesalahan",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black87,
+          textColor: Colors.white,
+        );
       }
     }
   }
@@ -65,13 +79,13 @@ class _DiagnosisMasyarakatState extends State<DiagnosisMasyarakat> {
     final currentIdGejala = _questions[_currentIndex]['id_gejala'];
 
     if (_answers[currentIdGejala] == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Silakan pilih tingkat keyakinan Anda"),
+      Fluttertoast.showToast(
+          msg: "Silakan pilih tingkat keyakinan Anda",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.red,
-          duration: Duration(seconds: 1),
-        ),
-      );
+          textColor: Colors.white,
+        );
       return;
     }
 
@@ -90,7 +104,7 @@ class _DiagnosisMasyarakatState extends State<DiagnosisMasyarakat> {
       // Map untuk menyimpan CF Combine per Cedera
       // Key: id_cedera, Value: Nilai CF Sementara
       Map<int, double> hasilCF = {};
-      Map<int, Map<String, dynamic>> infoCedera = {}; // Simpan nama & detail
+      Map<int, Map<String, dynamic>> infoCedera = {}; 
 
       // Loop semua aturan pakar
       for (var aturan in _aturanPakar) {
@@ -98,7 +112,6 @@ class _DiagnosisMasyarakatState extends State<DiagnosisMasyarakat> {
         int idCedera = aturan['id_cedera'];
         double cfPakar = (aturan['bobot_cf_pakar'] as num).toDouble();
 
-        // Simpan info cedera (jika belum ada) agar bisa diambil nanti
         if (!infoCedera.containsKey(idCedera)) {
           infoCedera[idCedera] = aturan['cedera'];
         }
@@ -235,157 +248,184 @@ class _DiagnosisMasyarakatState extends State<DiagnosisMasyarakat> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: _bg,
       appBar: AppBar(
         title: Text(
           "Mulai Diagnosis",
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        backgroundColor: Colors.blue.shade500,
+        backgroundColor: _ink,
         foregroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  // Info Progress
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Pertanyaan ${_currentIndex + 1} dari ${_questions.length}",
-                      style: GoogleFonts.poppins(color: Colors.grey.shade700),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  
-                  // Progress Bar
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      minHeight: 10,
-                      backgroundColor: Colors.grey.shade200,
-                      color: const Color(0xFF9747FF),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-
-                  // KOTAK PERTANYAAN
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black87, width: 1.5),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        )
-                      ],
-                    ),
-                    child: Text(
-                      questionText,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF2D3142),
-                        height: 1.5,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F8FF),
+              Color(0xFFEAF1FF),
+              Color(0xFFF9FBFF),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  children: [
+                    // Info Progress
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Pertanyaan ${_currentIndex + 1} dari ${_questions.length}",
+                        style: GoogleFonts.poppins(color: _muted),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 10),
 
-                  // LIST OPSI JAWABAN
-                  Expanded(
-                    child: ListView.separated(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: _options.length,
-                      separatorBuilder: (c, i) => const SizedBox(height: 12),
-                      itemBuilder: (context, index) {
-                        final option = _options[index];
-                        // Menggunakan ID GEJALA sebagai key
-                        final isSelected = _answers[currentIdGejala] == option['value'];
-
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              _answers[currentIdGejala] = option['value'];
-                              _answerLabels[currentIdGejala] = option['label'];
-                            });
-                          },
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            decoration: BoxDecoration(
-                              color: isSelected ? const Color(0xFFF3E8FF) : Colors.grey.shade50,
-                              border: Border.all(
-                                color: isSelected ? const Color(0xFF9747FF) : Colors.transparent,
-                                width: 1.5
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 22,
-                                  height: 22,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: isSelected ? const Color(0xFF9747FF) : Colors.grey.shade400,
-                                      width: 2
-                                    ),
-                                    color: isSelected ? const Color(0xFF9747FF) : Colors.transparent,
-                                  ),
-                                  child: isSelected ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
-                                ),
-                                const SizedBox(width: 16),
-                                Text(
-                                  option['label'],
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                                    color: Colors.black87
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                    // Progress Bar
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 10,
+                        backgroundColor: _border,
+                        color: _primary,
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 30),
 
-                  // TOMBOL SELANJUTNYA
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(top: 10),
-                    child: ElevatedButton(
-                      onPressed: _nextQuestion,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE0C6FD),
-                        foregroundColor: Colors.black87,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 0,
+                    // KOTAK PERTANYAAN
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: _border, width: 1.2),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: _ink.withOpacity(0.06),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
                       ),
                       child: Text(
-                        _currentIndex == _questions.length - 1 ? "Selesai & Lihat Hasil" : "Selanjutnya",
-                        style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16),
+                        questionText,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: _ink,
+                          height: 1.5,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+
+                    // LIST OPSI JAWABAN
+                    Expanded(
+                      child: ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: _options.length,
+                        separatorBuilder: (c, i) => const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          final option = _options[index];
+                          // Menggunakan ID GEJALA sebagai key
+                          final isSelected =
+                              _answers[currentIdGejala] == option['value'];
+
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                _answers[currentIdGejala] = option['value'];
+                                _answerLabels[currentIdGejala] =
+                                    option['label'];
+                              });
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 16),
+                              decoration: BoxDecoration(
+                                color: isSelected ? _soft : Colors.white,
+                                border: Border.all(
+                                  color: isSelected ? _primary : _border,
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 22,
+                                    height: 22,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: isSelected ? _primary : _border,
+                                        width: 2,
+                                      ),
+                                      color: isSelected
+                                          ? _primary
+                                          : Colors.transparent,
+                                    ),
+                                    child: isSelected
+                                        ? const Icon(Icons.check,
+                                            size: 14, color: Colors.white)
+                                        : null,
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Text(
+                                    option['label'],
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                      color: _ink,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    // TOMBOL SELANJUTNYA
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(top: 10),
+                      child: ElevatedButton(
+                        onPressed: _nextQuestion,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _primary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          _currentIndex == _questions.length - 1
+                              ? "Selesai & Lihat Hasil"
+                              : "Selanjutnya",
+                          style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 }

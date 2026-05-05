@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/masyarakat/konsultasi_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,41 +7,60 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class KonsultasiMasyarakat extends StatelessWidget {
   const KonsultasiMasyarakat({super.key});
 
+  static const Color _bg = Color(0xFFF2F6FF);
+  static const Color _ink = Color(0xFF1F2A44);
+  static const Color _soft = Color(0xFFE7F0FF);
+  static const Color _muted = Color(0xFF6B7A99);
+  static const Color _border = Color(0xFFD6E2F3);
+
   @override
   Widget build(BuildContext context) {
     final KonsultasiService service = KonsultasiService();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FD), // Background abu sangat muda
+      backgroundColor: _bg,
       appBar: AppBar(
         title: Text(
           "Konsultasi Lanjutan",
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        backgroundColor: Colors.blue.shade500,
+        backgroundColor: _ink,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F8FF),
+              Color(0xFFEAF1FF),
+              Color(0xFFF9FBFF),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
             // 1. INFO CARD ATAS (Warna Cyan)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.cyanAccent.shade100, // Warna Cyan cerah
+                color: _soft,
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: _border),
               ),
               child: Text(
                 "Jika keluhan lutut tidak membaik, disarankan untuk berkonsultasi dengan tenaga medis.",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
-                  color: Colors.black87,
+                  color: _ink,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -123,16 +143,18 @@ class KonsultasiMasyarakat extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.cyanAccent.shade100,
+                color: _soft,
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: _border),
               ),
               child: Text(
                 "Informasi ini bersifat rekomendasi dan tidak menggantikan pemeriksaan langsung oleh tenaga medis.",
                 textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(fontSize: 12, color: Colors.black87),
+                style: GoogleFonts.poppins(fontSize: 12, color: _muted),
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -140,9 +162,13 @@ class KonsultasiMasyarakat extends StatelessWidget {
 
   // Helper untuk menampilkan error snackbar
   void _showError(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
+    Fluttertoast.showToast(
+          msg: "Terjadi kesalahan",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
   }
 
   // Widget Tombol Kontak Reusable
@@ -157,9 +183,10 @@ class KonsultasiMasyarakat extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white, // Background tombol putih
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _border),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: _ink.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -191,7 +218,7 @@ class KonsultasiMasyarakat extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF2D3142),
+                      color: _ink,
                     ),
                   ),
                 ),

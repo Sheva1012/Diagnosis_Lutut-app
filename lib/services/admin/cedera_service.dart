@@ -38,7 +38,7 @@ class CederaService {
         'kode_cedera': kode,
         'nama_cedera': nama,
         'deskripsi': deskripsi,
-        'penyebab': penyebab, // Field baru
+        'penyebab': penyebab, 
       });
     } catch (e) {
       throw Exception('Gagal menambah cedera: $e');

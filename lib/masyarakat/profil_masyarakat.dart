@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../auth/login_page.dart';
 import '../services/masyarakat/profile_service.dart';
@@ -14,6 +15,12 @@ class ProfilMasyarakat extends StatefulWidget {
 }
 
 class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
+  static const Color _bg = Color(0xFFF2F6FF);
+  static const Color _ink = Color(0xFF1F2A44);
+  static const Color _primary = Color(0xFF2F6FDB);
+  static const Color _muted = Color(0xFF6B7A99);
+  static const Color _border = Color(0xFFD6E2F3);
+
   final ProfileService _profileService = ProfileService();
 
   String _headerName = "Memuat...";
@@ -46,9 +53,13 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
   // --- FUNGSI BARU: LIHAT FOTO POP-UP ---
   void _viewPhoto() {
     if (_fotoProfil.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Belum ada foto profil")));
+      Fluttertoast.showToast(
+          msg: "Belum ada foto profil",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black87,
+          textColor: Colors.white,
+        );
       return;
     }
 
@@ -107,16 +118,15 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
   }
 
   Future<void> _handleLogout() async {
-    // ... (Kode Logout Tetap Sama) ...
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          'Keluar Akun',
+          'Logout',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
         content: Text(
-          'Apakah Anda yakin ingin keluar dari akun?',
+          'Apakah Anda yakin ingin logout?',
           style: GoogleFonts.poppins(),
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -131,7 +141,7 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'Keluar',
+              'Logout',
               style: GoogleFonts.poppins(
                 color: Colors.red,
                 fontWeight: FontWeight.bold,
@@ -156,17 +166,29 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FD),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 10.0,
-            ),
-            child: Column(
-              children: [
+      backgroundColor: _bg,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F8FF),
+              Color(0xFFEAF1FF),
+              Color(0xFFF9FBFF),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 10.0,
+              ),
+              child: Column(
+                children: [
                 const SizedBox(height: 10),
 
                 // --- AVATAR (DIBUNGKUS GESTURE DETECTOR) ---
@@ -178,7 +200,7 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.blue.shade100, width: 2),
+                      border: Border.all(color: _border, width: 2),
                       image: _fotoProfil.isNotEmpty
                           ? DecorationImage(
                               image: NetworkImage(_fotoProfil),
@@ -187,7 +209,7 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
                           : null,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.blue.withOpacity(0.1),
+                          color: _primary.withOpacity(0.12),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
@@ -197,7 +219,7 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
                         ? Icon(
                             Icons.person,
                             size: 45,
-                            color: Colors.blue.shade400,
+                            color: _primary,
                           )
                         : null,
                   ),
@@ -212,7 +234,7 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF2D3142),
+                    color: _ink,
                   ),
                 ),
 
@@ -227,13 +249,13 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: _border),
                   ),
                   child: Text(
                     "Masyarakat",
                     style: GoogleFonts.poppins(
                       fontSize: 11,
-                      color: Colors.grey.shade600,
+                      color: _muted,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -243,13 +265,13 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
 
                 // --- BAGIAN INFORMASI AKUN ---
                 _buildInfoRow(Icons.badge_outlined, "Nama Lengkap", _namaAsli),
-                const Divider(height: 24, color: Colors.black12),
+                Divider(height: 24, color: _border),
 
                 _buildInfoRow(Icons.phone_android_rounded, "Nomor HP", _noHP),
-                const Divider(height: 24, color: Colors.black12),
+                Divider(height: 24, color: _border),
 
                 _buildInfoRow(Icons.email_outlined, "Email", _email),
-                const Divider(height: 24, color: Colors.black12),
+                Divider(height: 24, color: _border),
 
                 _buildInfoRow(
                   Icons.calendar_today_rounded,
@@ -335,7 +357,7 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
                         const Icon(Icons.logout, size: 18),
                         const SizedBox(width: 8),
                         Text(
-                          "Keluar Akun",
+                          "Logout",
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w600,
                             fontSize: 13,
@@ -347,7 +369,8 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
                 ),
 
                 const SizedBox(height: 20),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -364,15 +387,16 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: _border),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.05),
+                color: _ink.withOpacity(0.05),
                 blurRadius: 4,
                 spreadRadius: 1,
               ),
             ],
           ),
-          child: Icon(icon, color: Colors.blue.shade600, size: 20),
+          child: Icon(icon, color: _primary, size: 20),
         ),
         const SizedBox(width: 14),
         Expanded(
@@ -383,7 +407,7 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
                 label,
                 style: GoogleFonts.poppins(
                   fontSize: 11,
-                  color: Colors.grey.shade500,
+                  color: _muted,
                 ),
               ),
               Text(
@@ -391,7 +415,7 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: const Color(0xFF2D3142),
+                  color: _ink,
                 ),
               ),
             ],
@@ -415,11 +439,11 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: _border),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.03),
+                color: _ink.withOpacity(0.04),
                 blurRadius: 5,
                 spreadRadius: 0,
               ),
@@ -427,7 +451,7 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
           ),
           child: Row(
             children: [
-              Icon(icon, color: Colors.grey.shade700, size: 20),
+              Icon(icon, color: _muted, size: 20),
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
@@ -435,13 +459,13 @@ class _ProfilMasyarakatState extends State<ProfilMasyarakat> {
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFF2D3142),
+                    color: _ink,
                   ),
                 ),
               ),
               Icon(
                 Icons.chevron_right_rounded,
-                color: Colors.grey.shade400,
+                color: _muted,
                 size: 18,
               ),
             ],

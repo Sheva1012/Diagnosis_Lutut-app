@@ -10,6 +10,11 @@ class DaftarGejalaMasyarakat extends StatefulWidget {
 }
 
 class _DaftarGejalaMasyarakatState extends State<DaftarGejalaMasyarakat> {
+  static const Color _bg = Color(0xFFF2F6FF);
+  static const Color _ink = Color(0xFF1F2A44);
+  static const Color _muted = Color(0xFF6B7A99);
+  static const Color _border = Color(0xFFD6E2F3);
+
   final DaftarGejalaService _service = DaftarGejalaService();
   
   List<Map<String, dynamic>> _daftarGejala = [];
@@ -44,18 +49,31 @@ class _DaftarGejalaMasyarakatState extends State<DaftarGejalaMasyarakat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, 
+      backgroundColor: _bg,
       appBar: AppBar(
         title: Text(
           "Daftar Gejala",
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        backgroundColor: Colors.blue.shade500,
+        backgroundColor: _ink,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
-      body: _buildBody(),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F8FF),
+              Color(0xFFEAF1FF),
+              Color(0xFFF9FBFF),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: _buildBody(),
+      ),
     );
   }
 
@@ -65,11 +83,21 @@ class _DaftarGejalaMasyarakatState extends State<DaftarGejalaMasyarakat> {
     }
 
     if (_errorMessage.isNotEmpty) {
-      return Center(child: Text(_errorMessage, style: GoogleFonts.poppins()));
+      return Center(
+        child: Text(
+          _errorMessage,
+          style: GoogleFonts.poppins(color: _muted),
+        ),
+      );
     }
 
     if (_daftarGejala.isEmpty) {
-      return Center(child: Text("Belum ada data gejala.", style: GoogleFonts.poppins()));
+      return Center(
+        child: Text(
+          "Belum ada data gejala.",
+          style: GoogleFonts.poppins(color: _muted),
+        ),
+      );
     }
 
     // LIST VIEW SESUAI SKETSA
@@ -87,15 +115,23 @@ class _DaftarGejalaMasyarakatState extends State<DaftarGejalaMasyarakat> {
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
           decoration: BoxDecoration(
-            color: Colors.grey.shade200, // Warna kotak abu-abu muda sesuai sketsa
-            borderRadius: BorderRadius.circular(8), // Sudut sedikit membulat
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: _border),
+            boxShadow: [
+              BoxShadow(
+                color: _ink.withOpacity(0.06),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Text(
             namaGejala,
             style: GoogleFonts.poppins(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Colors.black87,
+              color: _ink,
             ),
           ),
         );

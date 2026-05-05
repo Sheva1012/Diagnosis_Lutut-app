@@ -14,11 +14,36 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<double> _scaleAnimation;
+
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..forward();
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.93, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
+    );
+
     _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   void _startTimer() {
@@ -81,29 +106,111 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final logoSize = size.width * 0.58;
+
     return Scaffold(
-      backgroundColor: Colors.blue.shade700,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFF5F9FF),
+              Color(0xFFE6F0FF),
+            ],
+          ),
+        ),
+        child: Stack(
           children: [
-            const Icon(Icons.health_and_safety, size: 100, color: Colors.white),
-            const SizedBox(height: 20),
-            Text(
-              "Knee Expert",
-              style: GoogleFonts.poppins(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            Positioned(
+              top: -90,
+              right: -60,
+              child: Container(
+                width: 230,
+                height: 230,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0x22E07A2A),
+                ),
               ),
             ),
-            const SizedBox(height: 10),
-            Text(
-              "Diagnosis Cedera Lutut Mandiri",
-              style: GoogleFonts.poppins(fontSize: 16, color: Colors.white70),
+            Positioned(
+              bottom: -70,
+              left: -50,
+              child: Container(
+                width: 190,
+                height: 190,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0x221B7C8A),
+                ),
+              ),
             ),
-            const SizedBox(height: 50),
-            const CircularProgressIndicator(color: Colors.white),
+            Center(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: logoSize,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(28),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x26000000),
+                              blurRadius: 26,
+                              offset: Offset(0, 12),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.asset(
+                            'assets/images/logo-kmc.jpg',
+                            fit: BoxFit.contain,
+                            filterQuality: FilterQuality.high,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Knee Check',
+                        style: GoogleFonts.poppins(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF0F4A56),
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Diagnosis Cedera Lutut Mandiri',
+                        style: GoogleFonts.poppins(
+                          fontSize: 15,
+                          color: const Color(0xFF325E67),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 34),
+                      const SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.8,
+                          color: Color(0xFFE07A2A),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '/core/supabase_client.dart';
 
@@ -50,20 +52,68 @@ class PenggunaService {
     String? username,
   }) async {
     try {
-      final authRes = await _client.auth.signUp(
-        email: email,
-        password: password,
-        data: {'nama_lengkap': namaLengkap, 'role': role, 'username': username},
+      final url = Uri.parse('${SupabaseConfig.supabaseUrl}/auth/v1/signup');
+      final response = await http.post(
+        url,
+        headers: {
+          'apikey': SupabaseConfig.supabaseAnonKey,
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+          'data': {
+            'nama_lengkap': namaLengkap,
+            'role': role,
+            'username': username,
+          }
+        }),
       );
 
-      if (authRes.user != null) {
-        await _client.from('users').upsert({
-          'id_user': authRes.user!.id,
-          'email': email,
-          'nama_lengkap': namaLengkap,
-          'role': role,
-          'username': username,
-        });
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        final error = jsonDecode(response.body);
+        throw Exception(error['msg'] ?? 'Gagal mendaftar');
+      }
+
+      final resData = jsonDecode(response.body);
+      final newUserId = resData['user'] != null ? resData['user']['id'] : resData['id'];
+      final accessToken = resData['access_token'] ?? resData['session']?['access_token'];
+
+      if (newUserId != null) {
+        if (accessToken != null) {
+          // Bypass RLS using the new user's access token
+          final insertUrl = Uri.parse('${SupabaseConfig.supabaseUrl}/rest/v1/users');
+          final insertRes = await http.post(
+            insertUrl,
+            headers: {
+              'apikey': SupabaseConfig.supabaseAnonKey,
+              'Authorization': 'Bearer $accessToken',
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates'
+            },
+            body: jsonEncode({
+              'id_user': newUserId,
+              'email': email,
+              'nama_lengkap': namaLengkap,
+              'role': role,
+              'username': username,
+            }),
+          );
+
+          if (insertRes.statusCode >= 400) {
+            print("Gagal insert profile: ${insertRes.body}");
+            throw Exception('Pengguna dibuat tapi gagal menyimpan profil.');
+          }
+        } else {
+          // Fallback if no session was returned
+          await _client.from('users').upsert({
+            'id_user': newUserId,
+            'email': email,
+            'nama_lengkap': namaLengkap,
+            'role': role,
+            'username': username,
+          });
+        }
       }
     } catch (e) {
       throw Exception('Gagal menambah pengguna: $e');

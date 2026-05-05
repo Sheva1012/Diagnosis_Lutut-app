@@ -4,25 +4,43 @@ import 'package:google_fonts/google_fonts.dart';
 class BantuanMasyarakat extends StatelessWidget {
   const BantuanMasyarakat({super.key});
 
+  static const Color _bg = Color(0xFFF2F6FF);
+  static const Color _ink = Color(0xFF1F2A44);
+  static const Color _primary = Color(0xFF2F6FDB);
+  static const Color _muted = Color(0xFF6B7A99);
+  static const Color _border = Color(0xFFD6E2F3);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FD), // Background abu sangat muda
+      backgroundColor: _bg,
       appBar: AppBar(
         title: Text(
           "Bantuan & Tentang",
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        backgroundColor: Colors.blue.shade500,
+        backgroundColor: _ink,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F8FF),
+              Color(0xFFEAF1FF),
+              Color(0xFFF9FBFF),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
             // --- HEADER LOGO APLIKASI ---
             const SizedBox(height: 10),
             Center(
@@ -35,19 +53,19 @@ class BantuanMasyarakat extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
-                        BoxShadow(color: Colors.blue.withOpacity(0.2), blurRadius: 15, offset: const Offset(0, 5))
+                        BoxShadow(color: _primary.withOpacity(0.18), blurRadius: 15, offset: const Offset(0, 5))
                       ],
                     ),
-                    child: Icon(Icons.health_and_safety, size: 40, color: Colors.blue.shade600),
+                    child: Icon(Icons.health_and_safety, size: 40, color: _primary),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     "Sistem Pakar Lutut",
-                    style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF2D3142)),
+                    style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: _ink),
                   ),
                   Text(
                     "Versi 1.0.0",
-                    style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey.shade500),
+                    style: GoogleFonts.poppins(fontSize: 12, color: _muted),
                   ),
                 ],
               ),
@@ -88,8 +106,9 @@ class BantuanMasyarakat extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: _border),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))
+                  BoxShadow(color: _ink.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
                 ],
               ),
               child: Column(
@@ -97,23 +116,23 @@ class BantuanMasyarakat extends StatelessWidget {
                 children: [
                   Text(
                     "Deskripsi",
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14, color: _ink),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     "Aplikasi ini dirancang untuk membantu masyarakat mendeteksi dini jenis cedera lutut berdasarkan gejala yang dirasakan. Aplikasi ini juga menyediakan informasi edukasi dan rekomendasi penanganan awal.",
-                    style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey.shade700, height: 1.6),
+                    style: GoogleFonts.poppins(fontSize: 13, color: _muted, height: 1.6),
                     textAlign: TextAlign.justify,
                   ),
                   const Divider(height: 30),
                   Text(
                     "Dikembangkan Oleh",
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14, color: _ink),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     "Mahasiswa Manajemen Informatika Politeknik Negeri Malang",
-                    style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey.shade700),
+                    style: GoogleFonts.poppins(fontSize: 13, color: _muted),
                   ),
                 ],
               ),
@@ -124,10 +143,11 @@ class BantuanMasyarakat extends StatelessWidget {
             // Footer Copyright
             Text(
               "© 2025 Sistem Pakar Lutut. All Rights Reserved.",
-              style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey.shade400),
+              style: GoogleFonts.poppins(fontSize: 11, color: _muted),
             ),
             const SizedBox(height: 20),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -142,7 +162,7 @@ class BantuanMasyarakat extends StatelessWidget {
         style: GoogleFonts.poppins(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: const Color(0xFF2D3142),
+          color: _ink,
         ),
       ),
     );
@@ -155,21 +175,21 @@ class BantuanMasyarakat extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: _border),
       ),
       child: Theme(
         data: ThemeData().copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           title: Text(
             question,
-            style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.black87),
+            style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w500, color: _ink),
           ),
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Text(
                 answer,
-                style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey.shade600, height: 1.5),
+                style: GoogleFonts.poppins(fontSize: 13, color: _muted, height: 1.5),
               ),
             ),
           ],

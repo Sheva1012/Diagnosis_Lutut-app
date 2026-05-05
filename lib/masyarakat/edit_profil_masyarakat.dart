@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,6 +25,13 @@ class EditProfilMasyarakat extends StatefulWidget {
 }
 
 class _EditProfilMasyarakatState extends State<EditProfilMasyarakat> {
+  static const Color _bg = Color(0xFFF2F6FF);
+  static const Color _ink = Color(0xFF1F2A44);
+  static const Color _primary = Color(0xFF2F6FDB);
+  static const Color _soft = Color(0xFFE7F0FF);
+  static const Color _muted = Color(0xFF6B7A99);
+  static const Color _border = Color(0xFFD6E2F3);
+
   final ProfileService _service = ProfileService();
   final _formKey = GlobalKey<FormState>();
 
@@ -74,7 +82,7 @@ class _EditProfilMasyarakatState extends State<EditProfilMasyarakat> {
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: 'Potong Foto',
-            toolbarColor: Colors.blue.shade500,
+            toolbarColor: _primary,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true, // Kunci agar tetap persegi
@@ -111,7 +119,13 @@ class _EditProfilMasyarakatState extends State<EditProfilMasyarakat> {
     }
 
     if (imageToView == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Belum ada foto profil")));
+      Fluttertoast.showToast(
+          msg: "Belum ada foto profil",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black87,
+          textColor: Colors.white,
+        );
       return;
     }
 
@@ -167,11 +181,23 @@ class _EditProfilMasyarakatState extends State<EditProfilMasyarakat> {
         imageFile: _selectedImage,
       );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Profil berhasil diperbarui!"), backgroundColor: Colors.green));
+        Fluttertoast.showToast(
+          msg: "Profil berhasil diperbarui!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black87,
+          textColor: Colors.white,
+        );
         Navigator.pop(context, true);
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+      if (mounted) Fluttertoast.showToast(
+          msg: "Terjadi kesalahan",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -187,21 +213,33 @@ class _EditProfilMasyarakatState extends State<EditProfilMasyarakat> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: _bg,
       appBar: AppBar(
         title: Text("Edit Profil", style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18)),
-        backgroundColor: Colors.blue.shade500,
+        backgroundColor: _ink,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F8FF),
+              Color(0xFFEAF1FF),
+              Color(0xFFF9FBFF),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               Center(
                 child: GestureDetector(
                   onTap: _showImageOptions,
@@ -211,18 +249,18 @@ class _EditProfilMasyarakatState extends State<EditProfilMasyarakat> {
                       Container(
                         width: 100, height: 100,
                         decoration: BoxDecoration(
-                          color: Colors.blue.shade50,
+                          color: _soft,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.blue.shade100, width: 2),
+                          border: Border.all(color: _border, width: 2),
                           image: avatarImage != null ? DecorationImage(image: avatarImage, fit: BoxFit.cover) : null,
                         ),
-                        child: avatarImage == null ? Icon(Icons.person, size: 50, color: Colors.blue.shade400) : null,
+                        child: avatarImage == null ? Icon(Icons.person, size: 50, color: _primary) : null,
                       ),
                       Positioned(
                         bottom: 0, right: 0,
                         child: Container(
                           padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+                          decoration: const BoxDecoration(color: _primary, shape: BoxShape.circle),
                           child: const Icon(Icons.edit, color: Colors.white, size: 18),
                         ),
                       ),
@@ -231,7 +269,7 @@ class _EditProfilMasyarakatState extends State<EditProfilMasyarakat> {
                 ),
               ),
               const SizedBox(height: 10),
-              Center(child: Text("Ketuk foto untuk opsi lainnya", style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey.shade600))),
+              Center(child: Text("Ketuk foto untuk opsi lainnya", style: GoogleFonts.poppins(fontSize: 12, color: _muted))),
               const SizedBox(height: 30),
               _buildLabel("Nama Lengkap"),
               TextFormField(
@@ -254,17 +292,17 @@ class _EditProfilMasyarakatState extends State<EditProfilMasyarakat> {
               TextFormField(
                 controller: _emailController,
                 readOnly: true,
-                style: GoogleFonts.poppins(color: Colors.grey.shade600),
-                decoration: _inputDecoration("Email").copyWith(filled: true, fillColor: Colors.grey.shade100, suffixIcon: const Icon(Icons.lock, size: 18, color: Colors.grey)),
+                style: GoogleFonts.poppins(color: _muted),
+                decoration: _inputDecoration("Email").copyWith(filled: true, fillColor: _soft, suffixIcon: const Icon(Icons.lock, size: 18, color: Colors.grey)),
               ),
               const SizedBox(height: 8),
-              Text("*Email tidak dapat diubah.", style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey, fontStyle: FontStyle.italic)),
+              Text("*Email tidak dapat diubah.", style: GoogleFonts.poppins(fontSize: 11, color: _muted, fontStyle: FontStyle.italic)),
               const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _saveProfile,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  style: ElevatedButton.styleFrom(backgroundColor: _primary, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                   child: _isLoading ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) : Text("Simpan Perubahan", style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
               ),
@@ -273,17 +311,18 @@ class _EditProfilMasyarakatState extends State<EditProfilMasyarakat> {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () => Navigator.pop(context),
-                  style: OutlinedButton.styleFrom(foregroundColor: Colors.grey.shade700, side: BorderSide(color: Colors.grey.shade300), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  style: OutlinedButton.styleFrom(foregroundColor: _muted, side: BorderSide(color: _border), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                   child: Text("Batal", style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 16)),
                 ),
               ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildLabel(String text) => Padding(padding: const EdgeInsets.only(bottom: 8.0), child: Text(text, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500, color: const Color(0xFF2D3142))));
-  InputDecoration _inputDecoration(String hint) => InputDecoration(hintText: hint, hintStyle: GoogleFonts.poppins(color: Colors.grey.shade400, fontSize: 14), contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.blue)));
+  Widget _buildLabel(String text) => Padding(padding: const EdgeInsets.only(bottom: 8.0), child: Text(text, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500, color: _ink)));
+  InputDecoration _inputDecoration(String hint) => InputDecoration(hintText: hint, hintStyle: GoogleFonts.poppins(color: _muted, fontSize: 14), contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: _border)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: _border)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: _primary)));
 }

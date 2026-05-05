@@ -10,6 +10,13 @@ class EdukasiMasyarakat extends StatefulWidget {
 }
 
 class _EdukasiMasyarakatState extends State<EdukasiMasyarakat> {
+  static const Color _bg = Color(0xFFF2F6FF);
+  static const Color _ink = Color(0xFF1F2A44);
+  static const Color _primary = Color(0xFF2F6FDB);
+  static const Color _soft = Color(0xFFE7F0FF);
+  static const Color _muted = Color(0xFF6B7A99);
+  static const Color _border = Color(0xFFD6E2F3);
+
   final EdukasiService _service = EdukasiService();
   List<Map<String, dynamic>> _dataEdukasi = [];
   bool _isLoading = true;
@@ -33,24 +40,36 @@ class _EdukasiMasyarakatState extends State<EdukasiMasyarakat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FD),
+      backgroundColor: _bg,
       appBar: AppBar(
         title: Text(
           "Edukasi Cedera Lutut",
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        backgroundColor: Colors.blue.shade500,
+        backgroundColor: _ink,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F8FF),
+              Color(0xFFEAF1FF),
+              Color(0xFFF9FBFF),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
                   // HEADER GAMBAR & JUDUL
                   Center(
                     child: Column(
@@ -58,7 +77,7 @@ class _EdukasiMasyarakatState extends State<EdukasiMasyarakat> {
                         Icon(
                           Icons.health_and_safety_outlined, 
                           size: 80, 
-                          color: Colors.blue.shade300
+                          color: _primary
                         ),
                         const SizedBox(height: 10),
                         Text(
@@ -66,7 +85,7 @@ class _EdukasiMasyarakatState extends State<EdukasiMasyarakat> {
                           style: GoogleFonts.poppins(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF2D3142),
+                            color: _ink,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -75,7 +94,7 @@ class _EdukasiMasyarakatState extends State<EdukasiMasyarakat> {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             fontSize: 12,
-                            color: Colors.grey.shade600,
+                            color: _muted,
                           ),
                         ),
                       ],
@@ -93,22 +112,24 @@ class _EdukasiMasyarakatState extends State<EdukasiMasyarakat> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
+                      color: _soft,
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: _border),
                     ),
                     child: Text(
                       "Informasi ini bersifat edukatif dan tidak menggantikan pemeriksaan tenaga medis.",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Colors.grey.shade700,
+                        color: _muted,
                       ),
                     ),
                   ),
                   const SizedBox(height: 20),
-                ],
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 
@@ -118,9 +139,10 @@ class _EdukasiMasyarakatState extends State<EdukasiMasyarakat> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: _ink.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
@@ -144,7 +166,7 @@ class _EdukasiMasyarakatState extends State<EdukasiMasyarakat> {
             style: GoogleFonts.poppins(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF2D3142),
+              color: _ink,
             ),
           ),
           // ISI KONTEN KETIKA DIKLIK
@@ -155,14 +177,14 @@ class _EdukasiMasyarakatState extends State<EdukasiMasyarakat> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF8F9FD),
+                  color: const Color(0xFFF1F5FF),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   item['content'],
                   style: GoogleFonts.poppins(
                     fontSize: 13,
-                    color: Colors.black87,
+                    color: _muted,
                     height: 1.6, // Spasi antar baris biar enak dibaca
                   ),
                 ),

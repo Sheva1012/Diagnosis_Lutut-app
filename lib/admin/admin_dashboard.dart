@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'admin_sidebar.dart';
+import 'admin_theme.dart';
 
 // Import Screen Tujuan Navigasi
 import 'admin_kelola_gejala.dart';
@@ -33,6 +36,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   int _totalDiagnosis = 0;
   int _totalGejala = 0;
   int _totalCedera = 0;
+  String _username = "Admin";
   
   bool _isLoading = true;
 
@@ -46,6 +50,21 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Future<void> _loadDashboardData() async {
     setState(() => _isLoading = true);
     try {
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      String fetchedUsername = "Admin";
+      
+      if (userId != null) {
+        final userData = await Supabase.instance.client
+            .from('users')
+            .select('username')
+            .eq('id_user', userId)
+            .maybeSingle();
+        
+        if (userData != null && userData['username'] != null && userData['username'].toString().isNotEmpty) {
+          fetchedUsername = userData['username'];
+        }
+      }
+
       // Jalankan semua request count secara paralel agar cepat
       final results = await Future.wait([
         _penggunaService.getTotalPengguna(),    // Index 0
@@ -56,6 +75,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
       if (mounted) {
         setState(() {
+          _username = fetchedUsername;
           _totalPengguna = results[0];
           _totalDiagnosis = results[1];
           _totalGejala = results[2];
@@ -66,7 +86,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
     } catch (e) {
       if (mounted) {
         // Tampilkan error jika gagal, tapi jangan stop loading agar UI tetap muncul (dengan nilai 0)
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal memuat data: $e')));
+        Fluttertoast.showToast(
+          msg: 'Gagal memuat data: $e',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
         setState(() => _isLoading = false);
       }
     }
@@ -99,15 +125,28 @@ class _AdminDashboardState extends State<AdminDashboard> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
+                  color: iconColor.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, size: 28, color: iconColor),
               ),
               const SizedBox(height: 16), // Tambah jarak
-              Text(value, style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87)),
+              Text(
+                value,
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AdminTheme.ink,
+                ),
+              ),
               const SizedBox(height: 4),
-              Text(title, style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[600])),
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  color: const Color(0xFF8A6E5B),
+                ),
+              ),
             ],
           ),
         ),
@@ -119,14 +158,18 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Dashboard"),
-        backgroundColor: const Color(0xFF1E88E5),
+        title: Text("Dashboard", style: GoogleFonts.poppins(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+        backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: AdminTheme.appBarGradient),
+        ),
       ),
       drawer: const AdminSidebar(activePage: 'dashboard'),
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: AdminTheme.bg,
       body: RefreshIndicator(
+        color: AdminTheme.primary,
         onRefresh: _loadDashboardData, // Fitur tarik untuk refresh
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -140,7 +183,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
+                    colors: [AdminTheme.primaryDark, AdminTheme.primary],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -151,7 +194,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Selamat Datang, Admin",
+                      "Selamat Datang, $_username",
                       style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     const SizedBox(height: 4),
@@ -165,12 +208,21 @@ class _AdminDashboardState extends State<AdminDashboard> {
               
               const SizedBox(height: 24),
               
-              Text("Ringkasan Data", style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600)),
+              Text(
+                "Ringkasan Data",
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AdminTheme.ink,
+                ),
+              ),
               const SizedBox(height: 16),
 
               // Grid Stats
               _isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(
+                      child: CircularProgressIndicator(color: AdminTheme.primary),
+                    )
                   : GridView.count(
                       shrinkWrap: true, // Agar bisa di dalam SingleChildScrollView
                       physics: const NeverScrollableScrollPhysics(),
@@ -185,7 +237,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           "Total Pengguna", 
                           _totalPengguna.toString(), 
                           Icons.people, 
-                          Colors.blue, 
+                          AdminTheme.primary,
                           const AdminKelolaPengguna()
                         ),
                         _card(
@@ -193,7 +245,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           "Total Diagnosis", 
                           _totalDiagnosis.toString(), 
                           Icons.medical_services, 
-                          Colors.green, 
+                          AdminTheme.accent,
                           const AdminLaporanStatistik()
                         ),
                         _card(
@@ -201,7 +253,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           "Total Gejala", 
                           _totalGejala.toString(), 
                           Icons.coronavirus, 
-                          Colors.orange, 
+                          const Color(0xFFD9895B),
                           const AdminKelolaGejala()
                         ),
                         _card(
@@ -209,7 +261,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           "Total Cedera", 
                           _totalCedera.toString(), 
                           Icons.healing, 
-                          Colors.red, 
+                          AdminTheme.danger,
                           const AdminKelolaCedera()
                         ),
                       ],
